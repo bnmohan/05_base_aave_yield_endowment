@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dadami — Aave Yield Endowment</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Ethers.js v6 via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <!-- Environment Config -->
+  <script src="config.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #030712;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 75%);
+      --card-bg: rgba(17, 24, 39, 0.45);
+      --border-color: rgba(99, 102, 241, 0.15);
+      --border-glow: rgba(99, 102, 241, 0.35);
+      --color-primary: #ef4444; /* Red/Orange for Aave theme */
+      --color-primary-light: #f87171;
+      --color-accent: #f43f5e;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 28px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 25px 2px rgba(239, 68, 68, 0.08);
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 35px 5px rgba(239, 68, 68, 0.12);
+    }
+
+    .badge {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--color-primary-light);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .btn-wallet {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--color-primary-light);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+      color: #fff;
+    }
+
+    .wallet-info {
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    /* Stats Panel */
+    .stats-panel {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary-light);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <span class="badge">Project 05 — Aave Endowment</span>
+    <h1>Aave Yield Endowment</h1>
+    <p>Pool your USDC stablecoins to generate continuous lending interest yield on Aave V3. You can retrieve your original principal at any time.</p>
+
+    <!-- Stats Display -->
+    <div class="stats-panel">
+      <div class="stat-item">
+        <div class="stat-label">My Principal</div>
+        <div id="user-principal" class="stat-val">$0.00 USDC</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Yield Generated</div>
+        <div id="yield-earned" class="stat-val" style="color: var(--color-success);">$0.00 USDC</div>
+      </div>
+    </div>
+
+    <!-- Connect Wallet -->
+    <button id="connect-wallet-btn" class="btn btn-wallet">Connect Wallet</button>
+    <div id="wallet-info" class="wallet-info"></div>
+
+    <div class="form-group">
+      <label for="deposit-amount">USDC Deposit Amount</label>
+      <input type="number" id="deposit-amount" placeholder="e.g. 50.0" step="1">
+    </div>
+
+    <button id="deposit-btn" class="btn btn-primary" disabled>Deposit and Earn Yield</button>
+    <button id="harvest-btn" class="btn btn-wallet" style="margin-bottom: 12px;" disabled>Harvest Accrued Yield</button>
+    <button id="withdraw-btn" class="btn btn-wallet" style="color: var(--color-primary); border-color: rgba(239,68,68,0.2);" disabled>Withdraw My Principal</button>
+  </div>
+
+  <script>
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const walletInfo = document.getElementById('wallet-info');
+    const depositBtn = document.getElementById('deposit-btn');
+    const harvestBtn = document.getElementById('harvest-btn');
+    const withdrawBtn = document.getElementById('withdraw-btn');
+    const principalText = document.getElementById('user-principal');
+    const yieldText = document.getElementById('yield-earned');
+
+    let userWalletAddress = null;
+    let balance = 0;
+
+    connectBtn.addEventListener('click', async () => {
+      if (!window.ethereum) {
+        alert("Web3 Wallet not found!");
+        return;
+      }
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        userWalletAddress = accounts[0];
+
+        connectBtn.style.display = 'none';
+        walletInfo.innerText = `Connected: ${userWalletAddress}`;
+        walletInfo.style.display = 'block';
+        depositBtn.removeAttribute('disabled');
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    depositBtn.addEventListener('click', () => {
+      const amount = parseFloat(document.getElementById('deposit-amount').value);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Enter a valid deposit amount!");
+        return;
+      }
+      alert(`Approving USDC transfer & supplying $${amount} USDC to Aave V3...`);
+      balance += amount;
+      principalText.innerText = `$${balance.toFixed(2)} USDC`;
+      yieldText.innerText = `$${(balance * 0.0012).toFixed(4)} USDC`; // simulated accrued yield
+      
+      harvestBtn.removeAttribute('disabled');
+      withdrawBtn.removeAttribute('disabled');
+    });
+
+    harvestBtn.addEventListener('click', () => {
+      alert("Harvesting yield to campaign address... Success!");
+      yieldText.innerText = "$0.0000 USDC";
+    });
+
+    withdrawBtn.addEventListener('click', () => {
+      alert(`Redeeming aTokens & withdrawing $${balance} USDC principal...`);
+      balance = 0;
+      principalText.innerText = "$0.00 USDC";
+      yieldText.innerText = "$0.00 USDC";
+      harvestBtn.setAttribute('disabled', 'true');
+      withdrawBtn.setAttribute('disabled', 'true');
+    });
+  </script>
+</body>
+</html>

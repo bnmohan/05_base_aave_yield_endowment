@@ -89,6 +89,13 @@ This repository provides a **yield-bearing savings endowment gateway** integrate
 
 ## 🚀 Quickstart & Local Setup
 
+To easily set up this repository in standalone mode (configure environment files, install local dependencies, and compile contracts in one click), run:
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+
 ### 1. Smart Contract Compilation & Unit Tests
 ```bash
 cd contracts
