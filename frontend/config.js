@@ -6,8 +6,7 @@ window.APP_CONFIG = {
     "0x14a34": {
       CHAIN_ID: "0x14a34",
       CHAIN_NAME: "Base Sepolia Testnet",
-      RPC_URL: "https://base-sepolia-rpc.publicnode.com",
-
+      RPC_URL: "https://sepolia.base.org",
       BLOCK_EXPLORER: "https://sepolia.basescan.org",
       CONTRACT_ADDRESS: "0xE41Be53B79370CCe5a2Ecb65706528FbCa120648",
       USDC_ADDRESS: "0xba50Cd2A20f6DA35D788639E581bca8d0B5d4D5f",
