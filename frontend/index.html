@@ -3,32 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dadami — Aave Yield Endowment</title>
+  <title>Aave Yield Endowment — Decentralized Savings Gateway on Base</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   
   <!-- Ethers.js v6 via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <!-- Environment Config -->
-  <script src="config.js"></script>
+  <script src="config.js?v=10"></script>
+
+
+
+
+
+
+
 
   <style>
     :root {
       --bg-color: #030712;
-      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 75%);
-      --card-bg: rgba(17, 24, 39, 0.45);
-      --border-color: rgba(99, 102, 241, 0.15);
-      --border-glow: rgba(99, 102, 241, 0.35);
-      --color-primary: #ef4444; /* Red/Orange for Aave theme */
-      --color-primary-light: #f87171;
-      --color-accent: #f43f5e;
+      --bg-gradient: radial-gradient(circle at 50% -20%, #2e1065 0%, #0f172a 45%, #030712 90%);
+      --card-bg: rgba(15, 23, 42, 0.55);
+      --card-border: rgba(139, 92, 246, 0.2);
+      --card-glow: rgba(239, 68, 68, 0.15);
+      --primary-red: #ef4444;
+      --primary-red-hover: #dc2626;
+      --accent-violet: #8b5cf6;
+      --accent-violet-light: #a78bfa;
+      --accent-emerald: #10b981;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
-      --color-success: #10b981;
-      --color-warning: #f59e0b;
+      --text-dim: #6b7280;
     }
 
     * {
@@ -47,249 +55,1202 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px;
+      padding: 0 16px 40px 16px;
+      overflow-x: hidden;
     }
 
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-color);
-      border-radius: 28px;
-      padding: 40px;
-      max-width: 520px;
+    /* Header Nav */
+    header {
       width: 100%;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 25px 2px rgba(239, 68, 68, 0.08);
-      text-align: center;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      margin-bottom: 24px;
     }
 
-    .card:hover {
-      border-color: var(--border-glow);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 35px 5px rgba(239, 68, 68, 0.12);
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .badge {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: var(--color-primary-light);
-      padding: 6px 16px;
-      border-radius: 100px;
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #ef4444, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .brand-title {
       font-family: 'Outfit', sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      display: inline-block;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 34px;
       font-weight: 800;
-      margin-bottom: 12px;
+      font-size: 22px;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    p {
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .network-badge {
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: var(--accent-violet-light);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .btn-wallet {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      border: none;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-wallet:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    }
+
+    /* Container Layout */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-text {
+      max-width: 650px;
+    }
+
+    .hero-tag {
+      color: var(--accent-violet-light);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .hero-desc {
       color: var(--text-muted);
       font-size: 15px;
       line-height: 1.6;
-      margin-bottom: 28px;
     }
 
-    .form-group {
-      text-align: left;
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
+    .hero-sim-badge {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      cursor: pointer;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stat-icon {
+      font-size: 20px;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Main Gateway Card & Tabs */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gateway-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Nav Tabs */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.6);
+      padding: 6px;
+      border-radius: 14px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
       display: block;
     }
 
-    input {
+    /* Forms */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field {
       width: 100%;
-      background: rgba(17, 24, 39, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 80px 16px 18px;
       color: #fff;
-      font-size: 15px;
+      font-size: 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
       outline: none;
       transition: all 0.3s ease;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .input-field:focus {
+      border-color: var(--primary-red);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--accent-violet-light);
+      font-size: 15px;
+    }
+
+    .quick-preset-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .preset-btn {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      color: #fff;
+    }
+
+    /* Action Buttons */
+    .btn-action {
       width: 100%;
-      padding: 14px 28px;
+      padding: 16px;
       border-radius: 14px;
+      border: none;
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
       font-size: 16px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid transparent;
-      outline: none;
-      margin-bottom: 16px;
-    }
-
-    .btn-wallet {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: var(--color-primary-light);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-      color: #fff;
-    }
-
-    .wallet-info {
-      background: rgba(17, 24, 39, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px;
-      font-family: monospace;
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      display: none;
-    }
-
-    /* Stats Panel */
-    .stats-panel {
-      background: rgba(17, 24, 39, 0.8);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 24px;
       display: flex;
-      justify-content: space-around;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .stat-item {
-      text-align: center;
+    .btn-primary-action {
+      background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
     }
 
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-muted);
+    .btn-primary-action:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+    }
+
+    .btn-harvest-action {
+      background: linear-gradient(135deg, var(--accent-emerald) 0%, #047857 100%);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-harvest-action:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Side Panel Info */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .info-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .campaign-box {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .campaign-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
       margin-bottom: 4px;
     }
 
-    .stat-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--color-primary-light);
+    .campaign-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent-violet-light);
+      word-break: break-all;
+    }
+
+    .impact-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .impact-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Logs & Activity Drawer */
+    .log-box {
+      background: rgba(3, 7, 18, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-item {
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .log-item.success { color: var(--accent-emerald); }
+    .log-item.info { color: var(--accent-violet-light); }
+    .log-item.warn { color: #f59e0b; }
+
+    /* Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-left: 4px solid var(--primary-red);
+      border-radius: 12px;
+      padding: 14px 20px;
+      color: #fff;
+      font-size: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: slideIn 0.3s ease forwards;
+      max-width: 380px;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <span class="badge">Project 05 — Aave Endowment</span>
-    <h1>Aave Yield Endowment</h1>
-    <p>Pool your USDC stablecoins to generate continuous lending interest yield on Aave V3. You can retrieve your original principal at any time.</p>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">🌾</div>
+      <div class="brand-title">Yield Endowment</div>
+    </div>
 
-    <!-- Stats Display -->
-    <div class="stats-panel">
-      <div class="stat-item">
-        <div class="stat-label">My Principal</div>
-        <div id="user-principal" class="stat-val">$0.00 USDC</div>
+    <div class="header-actions">
+      <div class="network-badge">
+        <span class="dot-live"></span>
+        <span id="network-name">Base Sepolia</span>
       </div>
-      <div class="stat-item">
-        <div class="stat-label">Yield Generated</div>
-        <div id="yield-earned" class="stat-val" style="color: var(--color-success);">$0.00 USDC</div>
+      <button id="connect-wallet-btn" class="btn-wallet">Connect Wallet</button>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <div class="container">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-text">
+        <div class="hero-tag">Decentralized Savings Endowment</div>
+        <h1 class="hero-title">Continuous Yield for Causes, 100% Principal Protection</h1>
+        <p class="hero-desc">
+          Lock your stablecoins (USDC) into Aave V3 lending pools on Base L2. Your deposit continuously generates interest yield for designated public causes while your principal stays 100% safe and withdrawable anytime.
+        </p>
+        <div id="sim-mode-badge" class="hero-sim-banner hero-sim-badge">
+          ⚡ Interactive Simulation Mode Active (No wallet required)
+        </div>
       </div>
     </div>
 
-    <!-- Connect Wallet -->
-    <button id="connect-wallet-btn" class="btn btn-wallet">Connect Wallet</button>
-    <div id="wallet-info" class="wallet-info"></div>
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Total Value Locked</span>
+          <span class="stat-icon">🔒</span>
+        </div>
+        <div id="tvl-val" class="stat-value">$124,500.00</div>
+        <div class="stat-sub">Supplied to Aave V3 Pool</div>
+      </div>
 
-    <div class="form-group">
-      <label for="deposit-amount">USDC Deposit Amount</label>
-      <input type="number" id="deposit-amount" placeholder="e.g. 50.0" step="1">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">My Deposited Principal</span>
+          <span class="stat-icon">💰</span>
+        </div>
+        <div id="user-principal-val" class="stat-value">$0.00</div>
+        <div class="stat-sub">100% Withdrawable</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Accrued Campaign Yield</span>
+          <span class="stat-icon">🌱</span>
+        </div>
+        <div id="accrued-yield-val" class="stat-value" style="color: var(--accent-emerald);">$0.0000</div>
+        <div class="stat-sub">Ready to Harvest</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Aave V3 Lending APY</span>
+          <span class="stat-icon">📈</span>
+        </div>
+        <div id="apy-val" class="stat-value" style="color: var(--accent-violet-light);">5.25%</div>
+        <div class="stat-sub">Base Sepolia Rate</div>
+      </div>
     </div>
 
-    <button id="deposit-btn" class="btn btn-primary" disabled>Deposit and Earn Yield</button>
-    <button id="harvest-btn" class="btn btn-wallet" style="margin-bottom: 12px;" disabled>Harvest Accrued Yield</button>
-    <button id="withdraw-btn" class="btn btn-wallet" style="color: var(--color-primary); border-color: rgba(239,68,68,0.2);" disabled>Withdraw My Principal</button>
+    <!-- Main Grid -->
+    <div class="main-grid">
+      
+      <!-- Gateway Actions Card -->
+      <div class="gateway-card">
+        
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab('deposit')">Deposit</button>
+          <button class="tab-btn" onclick="switchTab('withdraw')">Withdraw</button>
+          <button class="tab-btn" onclick="switchTab('harvest')">Harvest Yield</button>
+          <button class="tab-btn" onclick="switchTab('beneficiary')">Beneficiary</button>
+        </div>
+
+        <!-- Deposit Tab -->
+        <div id="tab-deposit" class="tab-content active">
+          <div class="form-group">
+            <div class="form-label">
+              <span>USDC Deposit Amount</span>
+              <span id="user-usdc-bal">Wallet Balance: $1,000.00 USDC</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="deposit-input" class="input-field" placeholder="100.00" min="1" step="1">
+              <span class="input-suffix">USDC</span>
+            </div>
+            <div class="quick-preset-btns">
+              <button class="preset-btn" onclick="setPreset('deposit', 25)">25 USDC</button>
+              <button class="preset-btn" onclick="setPreset('deposit', 100)">100 USDC</button>
+              <button class="preset-btn" onclick="setPreset('deposit', 500)">500 USDC</button>
+              <button class="preset-btn" onclick="setPreset('deposit', 1000)">1000 USDC</button>
+            </div>
+          </div>
+
+          <button id="deposit-btn" class="btn-action btn-primary-action" onclick="handleDeposit()">
+            <span>Deposit & Earn Yield for Cause</span>
+          </button>
+        </div>
+
+        <!-- Withdraw Tab -->
+        <div id="tab-withdraw" class="tab-content">
+          <div class="form-group">
+            <div class="form-label">
+              <span>Principal Amount to Withdraw</span>
+              <span id="withdraw-max-label">Max Withdrawable: $0.00 USDC</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="withdraw-input" class="input-field" placeholder="0.00" min="1" step="1">
+              <span class="input-suffix">USDC</span>
+            </div>
+            <div class="quick-preset-btns">
+              <button class="preset-btn" onclick="setPreset('withdraw', 25)">25%</button>
+              <button class="preset-btn" onclick="setPreset('withdraw', 50)">50%</button>
+              <button class="preset-btn" onclick="setPreset('withdraw', 75)">75%</button>
+              <button class="preset-btn" onclick="setPreset('withdraw', 100)">100% Max</button>
+            </div>
+          </div>
+
+          <button id="withdraw-btn" class="btn-action btn-primary-action" style="background: linear-gradient(135deg, #475569 0%, #1e293b 100%);" onclick="handleWithdraw()">
+            <span>Withdraw Principal</span>
+          </button>
+        </div>
+
+        <!-- Harvest Tab -->
+        <div id="tab-harvest" class="tab-content">
+          <div class="form-group">
+            <div class="form-label">
+              <span>Accrued Campaign Yield Available</span>
+              <span id="harvest-avail-label">Available: $0.0000 USDC</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="harvest-input" class="input-field" placeholder="Leave empty for 100% or enter custom amount" min="0.01" step="0.01">
+              <span class="input-suffix">USDC</span>
+            </div>
+            <div class="quick-preset-btns">
+              <button class="preset-btn" onclick="setPreset('harvest', 25)">25%</button>
+              <button class="preset-btn" onclick="setPreset('harvest', 50)">50%</button>
+              <button class="preset-btn" onclick="setPreset('harvest', 75)">75%</button>
+              <button class="preset-btn" onclick="setPreset('harvest', 100)">100% Max</button>
+            </div>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+            Harvesting will withdraw accrued Aave lending interest yield from the pool and route it directly to the designated campaign address. Donor principals remain 100% untouched.
+          </p>
+
+          <button id="harvest-btn" class="btn-action btn-harvest-action" onclick="handleHarvest()">
+            <span>🌾 Harvest Accrued Yield to Beneficiary</span>
+          </button>
+        </div>
+
+
+        <!-- Beneficiary Tab -->
+        <div id="tab-beneficiary" class="tab-content">
+          <div class="form-group">
+            <div class="form-label">
+              <span>Active Public Campaign Beneficiary Address</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="text" id="beneficiary-address-input" class="input-field" style="font-size: 14px; font-family: monospace;" placeholder="0x..." value="">
+            </div>
+          </div>
+
+          <button id="update-beneficiary-btn" class="btn-action btn-primary-action" style="background: linear-gradient(135deg, var(--accent-violet) 0%, #6d28d9 100%);" onclick="handleUpdateBeneficiary()">
+            <span>Update Campaign Beneficiary (Owner)</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Side Info & Logs -->
+      <div class="side-panel">
+        
+        <!-- Active Campaign Details -->
+        <div class="info-card">
+          <div class="info-title">
+            <span>🎯 Active Campaign</span>
+          </div>
+
+          <div class="campaign-box">
+            <div id="campaign-title-display" class="campaign-name">Clean Water & Climate Fund</div>
+            <div id="campaign-addr-display" class="campaign-address">0x7099...79C8</div>
+          </div>
+
+          <div class="impact-row">
+            <span style="color: var(--text-muted);">Est. Annual Yield Generation:</span>
+            <span id="est-annual-yield" style="font-weight: 700; color: var(--accent-emerald);">$6,536.25 / yr</span>
+          </div>
+          <div class="impact-row">
+            <span style="color: var(--text-muted);">Total Harvested to Date:</span>
+            <span id="total-harvested-val" style="font-weight: 700; color: #fff;">$1,842.50 USDC</span>
+          </div>
+          <div class="impact-row">
+            <span style="color: var(--text-muted);">Beneficiary Wallet Balance:</span>
+            <span id="beneficiary-bal-val" style="font-weight: 700; color: var(--accent-emerald);">$0.00 USDC</span>
+          </div>
+        </div>
+
+
+        <!-- Live Activity Log -->
+        <div class="info-card">
+          <div class="info-title">
+            <span>📜 Protocol Transaction Log</span>
+          </div>
+
+          <div id="log-box" class="log-box">
+            <div class="log-item info">[System] Dapp initialized. Ready for Web3 / Simulation mode.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
   <script>
+    // App State
+    let isWeb3Connected = false;
+    let provider = null;
+    let signer = null;
+    let userAddress = null;
+
+    // Ethers Contract Instances
+    let endowmentContract = null;
+    let usdcContract = null;
+
+    // On-chain state
+    let onChainUserUsdcBalance = 0;
+    let onChainUserPrincipal = 0;
+    let onChainAccruedYield = 0;
+    let onChainTvl = 0;
+    let onChainTotalHarvested = 0;
+    let onChainBeneficiary = window.APP_CONFIG.DEFAULT_BENEFICIARY;
+    
+    // Simulated state for simulation mode fallback
+    let simUserPrincipal = 250.0;
+    let simUserUsdcBalance = 1000.0;
+    let simAccruedYield = 4.2850;
+    let simTotalHarvested = 1842.50;
+    let simTvl = 124500.0;
+    let simBeneficiary = window.APP_CONFIG.DEFAULT_BENEFICIARY;
+
+    // DOM Elements
     const connectBtn = document.getElementById('connect-wallet-btn');
-    const walletInfo = document.getElementById('wallet-info');
-    const depositBtn = document.getElementById('deposit-btn');
-    const harvestBtn = document.getElementById('harvest-btn');
-    const withdrawBtn = document.getElementById('withdraw-btn');
-    const principalText = document.getElementById('user-principal');
-    const yieldText = document.getElementById('yield-earned');
+    const tvlVal = document.getElementById('tvl-val');
+    const userPrincipalVal = document.getElementById('user-principal-val');
+    const accruedYieldVal = document.getElementById('accrued-yield-val');
+    const userUsdcBal = document.getElementById('user-usdc-bal');
+    const withdrawMaxLabel = document.getElementById('withdraw-max-label');
+    const harvestAmountDisplay = document.getElementById('harvest-amount-display');
+    const beneficiaryAddressInput = document.getElementById('beneficiary-address-input');
+    const campaignAddrDisplay = document.getElementById('campaign-addr-display');
+    const totalHarvestedVal = document.getElementById('total-harvested-val');
+    const estAnnualYield = document.getElementById('est-annual-yield');
+    const logBox = document.getElementById('log-box');
+    const networkNameEl = document.getElementById('network-name');
 
-    let userWalletAddress = null;
-    let balance = 0;
+    // Initialize UI
+    window.addEventListener('DOMContentLoaded', async () => {
+      beneficiaryAddressInput.value = simBeneficiary;
+      updateUI();
 
-    connectBtn.addEventListener('click', async () => {
-      if (!window.ethereum) {
-        alert("Web3 Wallet not found!");
-        return;
+      // Check if wallet is already connected to auto-connect
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts && accounts.length > 0) {
+            connectWallet();
+          }
+        } catch (e) {
+          console.warn("Auto-connect check error:", e);
+        }
       }
+
+      // Yield growth simulation / state polling interval
+      setInterval(() => {
+        if (!isWeb3Connected && simUserPrincipal > 0) {
+          const secYield = (simUserPrincipal * 0.0525) / (365 * 24 * 3600);
+          simAccruedYield += secYield;
+          updateUI();
+        } else if (isWeb3Connected) {
+          fetchOnChainData();
+        }
+      }, 3000);
+    });
+
+    // Switch Tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    // Quick Presets
+    function setPreset(type, val) {
+      const activePrincipal = isWeb3Connected ? onChainUserPrincipal : simUserPrincipal;
+      const activeUsdc = isWeb3Connected ? onChainUserUsdcBalance : simUserUsdcBalance;
+      const activeYield = isWeb3Connected ? onChainAccruedYield : simAccruedYield;
+
+      if (type === 'deposit') {
+        document.getElementById('deposit-input').value = val;
+      } else if (type === 'withdraw') {
+        const amount = (activePrincipal * (val / 100)).toFixed(2);
+        document.getElementById('withdraw-input').value = amount;
+      } else if (type === 'harvest') {
+        const amount = (activeYield * (val / 100)).toFixed(4);
+        document.getElementById('harvest-input').value = amount;
+      }
+    }
+
+
+    // Active Network Configuration
+    let activeNetwork = window.getActiveNetwork();
+
+    // Connect Web3 Wallet Helper
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          // Detect current chain or request switch if unknown
+          let currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+          if (!window.APP_CONFIG.NETWORKS[currentChainId]) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: window.APP_CONFIG.DEFAULT_CHAIN_ID }]
+              });
+              currentChainId = window.APP_CONFIG.DEFAULT_CHAIN_ID;
+            } catch (switchError) {
+              console.warn("Could not switch to default chain:", switchError);
+            }
+          }
+
+          activeNetwork = window.getActiveNetwork(currentChainId);
+
+          provider = new ethers.BrowserProvider(window.ethereum);
+          
+          // Request account access
+          const accounts = await provider.send("eth_requestAccounts", []);
+          signer = await provider.getSigner();
+          userAddress = accounts[0];
+
+          // Contract Instances
+          endowmentContract = new ethers.Contract(
+            activeNetwork.CONTRACT_ADDRESS,
+            window.APP_CONFIG.ENDOWMENT_ABI,
+            signer
+          );
+
+          usdcContract = new ethers.Contract(
+            activeNetwork.USDC_ADDRESS,
+            window.APP_CONFIG.ERC20_ABI,
+            signer
+          );
+
+          isWeb3Connected = true;
+          networkNameEl.innerText = activeNetwork.CHAIN_NAME;
+          connectBtn.innerText = `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
+          
+          document.getElementById('sim-mode-badge').innerText = `🟢 Web3 Wallet Connected On-Chain (${userAddress.substring(0, 6)}...)`;
+          document.getElementById('sim-mode-badge').style.background = 'rgba(16, 185, 129, 0.12)';
+          document.getElementById('sim-mode-badge').style.color = '#10b981';
+          document.getElementById('sim-mode-badge').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+
+          showToast(`Web3 Wallet Connected to ${activeNetwork.CHAIN_NAME}!`, "success");
+          addLog(`[Web3] Wallet connected on ${activeNetwork.CHAIN_NAME}: ${userAddress}`, 'success');
+
+          // Listen for network/account switches
+          if (window.ethereum.on) {
+            window.ethereum.on('chainChanged', () => window.location.reload());
+            window.ethereum.on('accountsChanged', () => window.location.reload());
+          }
+
+          await fetchOnChainData();
+        } catch (err) {
+          console.error(err);
+          showToast("Wallet connection error", "error");
+        }
+      } else {
+        showToast("Web3 wallet not detected. Using Simulation Mode.", "info");
+      }
+    }
+
+
+
+    connectBtn.addEventListener('click', connectWallet);
+
+
+    let onChainBeneficiaryUsdcBalance = 0;
+    let simBeneficiaryUsdcBalance = 0;
+
+    // Fetch On-Chain Data
+    async function fetchOnChainData() {
+      if (!isWeb3Connected || !endowmentContract || !usdcContract) return;
+
       try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send("eth_requestAccounts", []);
-        userWalletAddress = accounts[0];
+        const rawUsdcBal = await usdcContract.balanceOf(userAddress);
+        onChainUserUsdcBalance = parseFloat(ethers.formatUnits(rawUsdcBal, 6));
 
-        connectBtn.style.display = 'none';
-        walletInfo.innerText = `Connected: ${userWalletAddress}`;
-        walletInfo.style.display = 'block';
-        depositBtn.removeAttribute('disabled');
+        const rawPrincipal = await endowmentContract.getDonorPrincipal(userAddress);
+        onChainUserPrincipal = parseFloat(ethers.formatUnits(rawPrincipal, 6));
+
+        const rawYield = await endowmentContract.getAccruedYield();
+        onChainAccruedYield = parseFloat(ethers.formatUnits(rawYield, 6));
+
+        const rawTvl = await endowmentContract.getTotalValueLocked();
+        onChainTvl = parseFloat(ethers.formatUnits(rawTvl, 6));
+
+        const rawHarvested = await endowmentContract.totalYieldHarvested();
+        onChainTotalHarvested = parseFloat(ethers.formatUnits(rawHarvested, 6));
+
+        onChainBeneficiary = await endowmentContract.beneficiary();
+
+        const rawBenBal = await usdcContract.balanceOf(onChainBeneficiary);
+        onChainBeneficiaryUsdcBalance = parseFloat(ethers.formatUnits(rawBenBal, 6));
+
+        updateUI();
       } catch (err) {
-        console.error(err);
+        console.warn("Could not fetch on-chain state (contract not called yet):", err);
       }
-    });
+    }
 
-    depositBtn.addEventListener('click', () => {
-      const amount = parseFloat(document.getElementById('deposit-amount').value);
+    // Update UI Stats
+    function updateUI() {
+      const tvl = isWeb3Connected ? onChainTvl : simTvl;
+      const principal = isWeb3Connected ? onChainUserPrincipal : simUserPrincipal;
+      const yieldAmt = isWeb3Connected ? onChainAccruedYield : simAccruedYield;
+      const usdcBal = isWeb3Connected ? onChainUserUsdcBalance : simUserUsdcBalance;
+      const harvested = isWeb3Connected ? onChainTotalHarvested : simTotalHarvested;
+      const beneficiary = isWeb3Connected ? onChainBeneficiary : simBeneficiary;
+      const benBal = isWeb3Connected ? onChainBeneficiaryUsdcBalance : simBeneficiaryUsdcBalance;
+
+      tvlVal.innerText = `$${tvl.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+      userPrincipalVal.innerText = `$${principal.toFixed(2)}`;
+      accruedYieldVal.innerText = `$${yieldAmt.toFixed(4)}`;
+      userUsdcBal.innerText = `Wallet Balance: $${usdcBal.toFixed(2)} USDC`;
+      withdrawMaxLabel.innerText = `Max Withdrawable: $${principal.toFixed(2)} USDC`;
+      document.getElementById('harvest-avail-label').innerText = `Available: $${yieldAmt.toFixed(4)} USDC`;
+      campaignAddrDisplay.innerText = `${beneficiary.substring(0, 6)}...${beneficiary.substring(38)}`;
+      totalHarvestedVal.innerText = `$${harvested.toFixed(2)} USDC`;
+      document.getElementById('beneficiary-bal-val').innerText = `$${benBal.toFixed(2)} USDC`;
+
+
+      const annual = (tvl * 0.0525).toFixed(2);
+      estAnnualYield.innerText = `$${parseFloat(annual).toLocaleString()} / yr`;
+    }
+
+
+    // Handle Deposit
+    async function handleDeposit() {
+      const amountInput = document.getElementById('deposit-input');
+      const amount = parseFloat(amountInput.value);
+
       if (isNaN(amount) || amount <= 0) {
-        alert("Enter a valid deposit amount!");
+        showToast("Enter a valid deposit amount", "warn");
         return;
       }
-      alert(`Approving USDC transfer & supplying $${amount} USDC to Aave V3...`);
-      balance += amount;
-      principalText.innerText = `$${balance.toFixed(2)} USDC`;
-      yieldText.innerText = `$${(balance * 0.0012).toFixed(4)} USDC`; // simulated accrued yield
-      
-      harvestBtn.removeAttribute('disabled');
-      withdrawBtn.removeAttribute('disabled');
-    });
 
-    harvestBtn.addEventListener('click', () => {
-      alert("Harvesting yield to campaign address... Success!");
-      yieldText.innerText = "$0.0000 USDC";
-    });
+      if (isWeb3Connected && endowmentContract && usdcContract) {
+        try {
+          const parsedAmount = ethers.parseUnits(amount.toString(), 6);
 
-    withdrawBtn.addEventListener('click', () => {
-      alert(`Redeeming aTokens & withdrawing $${balance} USDC principal...`);
-      balance = 0;
-      principalText.innerText = "$0.00 USDC";
-      yieldText.innerText = "$0.00 USDC";
-      harvestBtn.setAttribute('disabled', 'true');
-      withdrawBtn.setAttribute('disabled', 'true');
-    });
+          addLog(`[Web3] Requesting USDC Approval for $${amount.toFixed(2)} USDC...`, 'info');
+          showToast(`Step 1/2: Approve USDC transfer in MetaMask...`, "info");
+
+          // 1. Approve contract to spend USDC
+          const approveTx = await usdcContract.approve(activeNetwork.CONTRACT_ADDRESS, parsedAmount);
+          await approveTx.wait();
+
+          addLog(`[Web3] Approval confirmed! Tx: ${approveTx.hash.substring(0, 10)}...`, 'success');
+
+          // 2. Deposit into YieldEndowment contract
+          showToast(`Step 2/2: Confirm Deposit in MetaMask...`, "info");
+          const depositTx = await endowmentContract.deposit(parsedAmount);
+          addLog(`[Web3] Submitting deposit transaction...`, 'info');
+          await depositTx.wait();
+
+          amountInput.value = '';
+          await fetchOnChainData();
+          addLog(`[Web3 Success] Deposited $${amount.toFixed(2)} USDC into Aave Pool! Tx: ${depositTx.hash.substring(0, 10)}...`, 'success');
+          showToast(`Successfully deposited $${amount.toFixed(2)} USDC on-chain!`, "success");
+        } catch (err) {
+          console.error(err);
+          showToast("Transaction failed or cancelled in wallet", "error");
+          addLog(`[Error] ${err.message || 'Transaction rejected'}`, 'warn');
+        }
+      } else {
+        // Fallback simulation mode
+        if (amount > simUserUsdcBalance) {
+          showToast("Insufficient USDC balance", "warn");
+          return;
+        }
+
+        addLog(`[Sim] Approving & Depositing $${amount.toFixed(2)} USDC...`, 'info');
+        showToast(`Depositing $${amount.toFixed(2)} USDC into Aave Pool...`, "info");
+
+        setTimeout(() => {
+          simUserUsdcBalance -= amount;
+          simUserPrincipal += amount;
+          simTvl += amount;
+          amountInput.value = '';
+
+          updateUI();
+          addLog(`[Sim Success] Deposited $${amount.toFixed(2)} USDC. Principal updated!`, 'success');
+          showToast(`Successfully deposited $${amount.toFixed(2)} USDC!`, "success");
+        }, 1200);
+      }
+    }
+
+    // Handle Withdraw
+    async function handleWithdraw() {
+      const amountInput = document.getElementById('withdraw-input');
+      const amount = parseFloat(amountInput.value);
+
+      if (isNaN(amount) || amount <= 0) {
+        showToast("Enter a valid withdrawal amount", "warn");
+        return;
+      }
+
+      if (isWeb3Connected && endowmentContract) {
+        try {
+          const parsedAmount = ethers.parseUnits(amount.toString(), 6);
+          addLog(`[Web3] Requesting principal withdrawal of $${amount.toFixed(2)} USDC...`, 'info');
+          showToast(`Confirm withdrawal in MetaMask...`, "info");
+
+          const withdrawTx = await endowmentContract.withdrawPrincipal(parsedAmount);
+          await withdrawTx.wait();
+
+          amountInput.value = '';
+          await fetchOnChainData();
+          addLog(`[Web3 Success] Withdrew $${amount.toFixed(2)} USDC principal! Tx: ${withdrawTx.hash.substring(0, 10)}...`, 'success');
+          showToast(`Principal withdrawal complete!`, "success");
+        } catch (err) {
+          console.error(err);
+          showToast("Withdrawal failed or cancelled in wallet", "error");
+        }
+      } else {
+        if (amount > simUserPrincipal) {
+          showToast("Cannot withdraw more than deposited principal!", "warn");
+          return;
+        }
+
+        addLog(`[Sim] Withdrawing $${amount.toFixed(2)} USDC principal...`, 'info');
+        showToast(`Redeeming aTokens & withdrawing $${amount.toFixed(2)} USDC...`, "info");
+
+        setTimeout(() => {
+          simUserPrincipal -= amount;
+          simUserUsdcBalance += amount;
+          simTvl -= amount;
+          amountInput.value = '';
+
+          updateUI();
+          addLog(`[Sim Success] Withdrew $${amount.toFixed(2)} USDC principal!`, 'success');
+          showToast(`Principal withdrawal complete!`, "success");
+        }, 1200);
+      }
+    }
+
+    // Handle Harvest
+    async function handleHarvest() {
+      const harvestInput = document.getElementById('harvest-input');
+      const customAmount = harvestInput.value.trim() !== '' ? parseFloat(harvestInput.value) : null;
+
+      if (isWeb3Connected && endowmentContract) {
+        try {
+          let harvestTx;
+          if (customAmount && !isNaN(customAmount) && customAmount > 0) {
+            const parsedAmount = ethers.parseUnits(customAmount.toString(), 6);
+            addLog(`[Web3] Harvesting custom yield amount $${customAmount.toFixed(4)} USDC on-chain...`, 'info');
+            showToast(`Confirm custom harvest in MetaMask...`, "info");
+            harvestTx = await endowmentContract.harvestYieldAmount(parsedAmount);
+          } else {
+            addLog(`[Web3] Harvesting 100% accrued yield on-chain to campaign...`, 'info');
+            showToast(`Confirm harvest transaction in MetaMask...`, "info");
+            harvestTx = await endowmentContract.harvestYield();
+          }
+
+          await harvestTx.wait();
+          harvestInput.value = '';
+
+          await fetchOnChainData();
+          addLog(`[Web3 Success] Harvested yield to campaign! Tx: ${harvestTx.hash.substring(0, 10)}...`, 'success');
+          showToast(`Yield successfully harvested to campaign!`, "success");
+        } catch (err) {
+          console.error(err);
+          showToast("Harvest failed or requested yield exceeds available balance", "error");
+        }
+      } else {
+        if (simAccruedYield <= 0.0001) {
+          showToast("No accrued yield available to harvest!", "warn");
+          return;
+        }
+
+        const harvested = (customAmount && customAmount <= simAccruedYield) ? customAmount : simAccruedYield;
+        addLog(`[Sim] Harvesting $${harvested.toFixed(4)} USDC yield to campaign...`, 'info');
+        showToast(`Harvesting accrued yield to campaign...`, "info");
+
+        setTimeout(() => {
+          simTotalHarvested += harvested;
+          simAccruedYield -= harvested;
+          simBeneficiaryUsdcBalance += harvested;
+          harvestInput.value = '';
+
+          updateUI();
+          addLog(`[Sim Success] Harvested $${harvested.toFixed(4)} USDC yield to campaign!`, 'success');
+          showToast(`Yield successfully harvested to campaign!`, "success");
+        }, 1200);
+      }
+    }
+
+
+    // Handle Update Beneficiary
+    async function handleUpdateBeneficiary() {
+      const newAddr = beneficiaryAddressInput.value.trim();
+      if (!newAddr || !newAddr.startsWith('0x') || newAddr.length !== 42) {
+        showToast("Invalid Ethereum address format", "warn");
+        return;
+      }
+
+      if (isWeb3Connected && endowmentContract) {
+        try {
+          addLog(`[Web3 Admin] Updating beneficiary address to ${newAddr}...`, 'info');
+          showToast(`Confirm update in MetaMask...`, "info");
+
+          const updateTx = await endowmentContract.setBeneficiary(newAddr);
+          await updateTx.wait();
+
+          await fetchOnChainData();
+          addLog(`[Web3 Success] Beneficiary updated to ${newAddr}!`, 'success');
+          showToast("Campaign beneficiary address updated!", "success");
+        } catch (err) {
+          console.error(err);
+          showToast("Only owner can update beneficiary address", "error");
+        }
+      } else {
+        simBeneficiary = newAddr;
+        updateUI();
+        addLog(`[Sim Admin] Beneficiary address updated to ${simBeneficiary}`, 'success');
+        showToast("Campaign beneficiary address updated!", "success");
+      }
+    }
+
+    // Toast Notifications
+    function showToast(msg, type = "info") {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      if (type === 'success') toast.style.borderLeftColor = 'var(--accent-emerald)';
+      if (type === 'warn') toast.style.borderLeftColor = '#f59e0b';
+      if (type === 'error') toast.style.borderLeftColor = '#ef4444';
+
+      toast.innerText = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
+    // Logging
+    function addLog(msg, type = "info") {
+      const item = document.createElement('div');
+      item.className = `log-item ${type}`;
+      item.innerText = msg;
+      logBox.appendChild(item);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
   </script>
 </body>
 </html>
