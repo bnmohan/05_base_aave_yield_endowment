@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aave Yield Endowment — Decentralized Savings Gateway on Base</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+
   <!-- Ethers.js v6 via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
   <!-- Environment Config -->
-  <script src="config.js?v=10"></script>
+  <script src="config.js?v=22"></script>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -531,9 +545,17 @@
       line-height: 1.4;
     }
 
-    .log-item.success { color: var(--accent-emerald); }
-    .log-item.info { color: var(--accent-violet-light); }
-    .log-item.warn { color: #f59e0b; }
+    .log-item.success {
+      color: var(--accent-emerald);
+    }
+
+    .log-item.info {
+      color: var(--accent-violet-light);
+    }
+
+    .log-item.warn {
+      color: #f59e0b;
+    }
 
     /* Toast Notification */
     #toast-container {
@@ -555,17 +577,25 @@
       padding: 14px 20px;
       color: #fff;
       font-size: 14px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       animation: slideIn 0.3s ease forwards;
       max-width: 380px;
     }
 
     @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Header -->
@@ -586,14 +616,40 @@
 
   <!-- Container -->
   <div class="container">
-    
+
+    <!-- Live Web3 Wallet Diagnostics -->
+    <div id="web3-debug-panel" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+      <div style="color: var(--accent-violet-light); font-weight: bold; margin-bottom: 12px; font-size: 13px;">🔍 Live MetaMask Provider Diagnostics:</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">Connected Account</div>
+          <div id="debug-account" style="color: #38bdf8; word-break: break-all; font-size: 11px; font-weight: 600;">Not Connected</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">MetaMask Chain ID</div>
+          <div id="debug-chain-id" style="color: #f59e0b; font-weight: 600;">None</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">Resolved Environment</div>
+          <div id="debug-resolved-net" style="color: #10b981; font-weight: 600;">Unspecified</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">Gateway Contract</div>
+          <div id="debug-contract" style="color: #cbd5e1; word-break: break-all; font-size: 11px;">None</div>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Hero Banner -->
     <div class="hero-banner">
+
       <div class="hero-text">
         <div class="hero-tag">Decentralized Savings Endowment</div>
         <h1 class="hero-title">Continuous Yield for Causes, 100% Principal Protection</h1>
         <p class="hero-desc">
-          Lock your stablecoins (USDC) into Aave V3 lending pools on Base L2. Your deposit continuously generates interest yield for designated public causes while your principal stays 100% safe and withdrawable anytime.
+          Lock your stablecoins (USDC) into Aave V3 lending pools on Base L2. Your deposit continuously generates
+          interest yield for designated public causes while your principal stays 100% safe and withdrawable anytime.
         </p>
         <div id="sim-mode-badge" class="hero-sim-banner hero-sim-badge">
           ⚡ Interactive Simulation Mode Active (No wallet required)
@@ -642,10 +698,10 @@
 
     <!-- Main Grid -->
     <div class="main-grid">
-      
+
       <!-- Gateway Actions Card -->
       <div class="gateway-card">
-        
+
         <!-- Navigation Tabs -->
         <div class="tabs-nav">
           <button class="tab-btn active" onclick="switchTab('deposit')">Deposit</button>
@@ -697,7 +753,8 @@
             </div>
           </div>
 
-          <button id="withdraw-btn" class="btn-action btn-primary-action" style="background: linear-gradient(135deg, #475569 0%, #1e293b 100%);" onclick="handleWithdraw()">
+          <button id="withdraw-btn" class="btn-action btn-primary-action"
+            style="background: linear-gradient(135deg, #475569 0%, #1e293b 100%);" onclick="handleWithdraw()">
             <span>Withdraw Principal</span>
           </button>
         </div>
@@ -710,7 +767,8 @@
               <span id="harvest-avail-label">Available: $0.0000 USDC</span>
             </div>
             <div class="input-wrapper">
-              <input type="number" id="harvest-input" class="input-field" placeholder="Leave empty for 100% or enter custom amount" min="0.01" step="0.01">
+              <input type="number" id="harvest-input" class="input-field"
+                placeholder="Leave empty for 100% or enter custom amount" min="0.01" step="0.01">
               <span class="input-suffix">USDC</span>
             </div>
             <div class="quick-preset-btns">
@@ -722,7 +780,8 @@
           </div>
 
           <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
-            Harvesting will withdraw accrued Aave lending interest yield from the pool and route it directly to the designated campaign address. Donor principals remain 100% untouched.
+            Harvesting will withdraw accrued Aave lending interest yield from the pool and route it directly to the
+            designated campaign address. Donor principals remain 100% untouched.
           </p>
 
           <button id="harvest-btn" class="btn-action btn-harvest-action" onclick="handleHarvest()">
@@ -738,11 +797,14 @@
               <span>Active Public Campaign Beneficiary Address</span>
             </div>
             <div class="input-wrapper">
-              <input type="text" id="beneficiary-address-input" class="input-field" style="font-size: 14px; font-family: monospace;" placeholder="0x..." value="">
+              <input type="text" id="beneficiary-address-input" class="input-field"
+                style="font-size: 14px; font-family: monospace;" placeholder="0x..." value="">
             </div>
           </div>
 
-          <button id="update-beneficiary-btn" class="btn-action btn-primary-action" style="background: linear-gradient(135deg, var(--accent-violet) 0%, #6d28d9 100%);" onclick="handleUpdateBeneficiary()">
+          <button id="update-beneficiary-btn" class="btn-action btn-primary-action"
+            style="background: linear-gradient(135deg, var(--accent-violet) 0%, #6d28d9 100%);"
+            onclick="handleUpdateBeneficiary()">
             <span>Update Campaign Beneficiary (Owner)</span>
           </button>
         </div>
@@ -751,7 +813,7 @@
 
       <!-- Side Info & Logs -->
       <div class="side-panel">
-        
+
         <!-- Active Campaign Details -->
         <div class="info-card">
           <div class="info-title">
@@ -816,7 +878,7 @@
     let onChainTvl = 0;
     let onChainTotalHarvested = 0;
     let onChainBeneficiary = window.APP_CONFIG.DEFAULT_BENEFICIARY;
-    
+
     // Simulated state for simulation mode fallback
     let simUserPrincipal = 250.0;
     let simUserUsdcBalance = 1000.0;
@@ -842,8 +904,13 @@
 
     // Initialize UI
     window.addEventListener('DOMContentLoaded', async () => {
+      networkNameEl.innerText = activeNetwork ? activeNetwork.CHAIN_NAME : "Not Connected";
+
+
       beneficiaryAddressInput.value = simBeneficiary;
       updateUI();
+      document.getElementById('deposit-input').addEventListener('input', updateDepositButtonState);
+
 
       // Check if wallet is already connected to auto-connect
       if (window.ethereum) {
@@ -903,59 +970,82 @@
     async function connectWallet() {
       if (window.ethereum) {
         try {
-          // Detect current chain or request switch if unknown
-          let currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-          if (!window.APP_CONFIG.NETWORKS[currentChainId]) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: window.APP_CONFIG.DEFAULT_CHAIN_ID }]
-              });
-              currentChainId = window.APP_CONFIG.DEFAULT_CHAIN_ID;
-            } catch (switchError) {
-              console.warn("Could not switch to default chain:", switchError);
-            }
-          }
-
-          activeNetwork = window.getActiveNetwork(currentChainId);
-
           provider = new ethers.BrowserProvider(window.ethereum);
-          
+
           // Request account access
           const accounts = await provider.send("eth_requestAccounts", []);
           signer = await provider.getSigner();
           userAddress = accounts[0];
 
-          // Contract Instances
-          endowmentContract = new ethers.Contract(
-            activeNetwork.CONTRACT_ADDRESS,
-            window.APP_CONFIG.ENDOWMENT_ABI,
-            signer
-          );
+          // Detect active chain from provider
+          let currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+          activeNetwork = window.getActiveNetwork(currentChainId);
 
-          usdcContract = new ethers.Contract(
-            activeNetwork.USDC_ADDRESS,
-            window.APP_CONFIG.ERC20_ABI,
-            signer
-          );
+          // Synchronize MetaMask's chain with the resolved network if mismatched
+          if (activeNetwork && currentChainId.toLowerCase() !== activeNetwork.CHAIN_ID.toLowerCase()) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: activeNetwork.CHAIN_ID }]
+              });
+              currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+            } catch (switchErr) {
+              console.warn("User declined network switch in MetaMask:", switchErr);
+            }
+          }
 
-          isWeb3Connected = true;
-          networkNameEl.innerText = activeNetwork.CHAIN_NAME;
-          connectBtn.innerText = `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
-          
-          document.getElementById('sim-mode-badge').innerText = `🟢 Web3 Wallet Connected On-Chain (${userAddress.substring(0, 6)}...)`;
-          document.getElementById('sim-mode-badge').style.background = 'rgba(16, 185, 129, 0.12)';
-          document.getElementById('sim-mode-badge').style.color = '#10b981';
-          document.getElementById('sim-mode-badge').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          const network = await provider.getNetwork();
 
-          showToast(`Web3 Wallet Connected to ${activeNetwork.CHAIN_NAME}!`, "success");
-          addLog(`[Web3] Wallet connected on ${activeNetwork.CHAIN_NAME}: ${userAddress}`, 'success');
+          // Update Live Diagnostics Display
+          document.getElementById('debug-account').innerText = userAddress;
+          document.getElementById('debug-chain-id').innerText = `${currentChainId} (Dec: ${parseInt(currentChainId, 16) || network.chainId})`;
+
+
+          if (activeNetwork) {
+            document.getElementById('debug-resolved-net').innerText = activeNetwork.CHAIN_NAME;
+            document.getElementById('debug-contract').innerText = activeNetwork.CONTRACT_ADDRESS;
+
+            // Contract Instances
+            endowmentContract = new ethers.Contract(
+              activeNetwork.CONTRACT_ADDRESS,
+              window.APP_CONFIG.ENDOWMENT_ABI,
+              signer
+            );
+
+            usdcContract = new ethers.Contract(
+              activeNetwork.USDC_ADDRESS,
+              window.APP_CONFIG.ERC20_ABI,
+              signer
+            );
+
+            isWeb3Connected = true;
+            networkNameEl.innerText = activeNetwork.CHAIN_NAME;
+            connectBtn.innerText = `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
+
+            document.getElementById('sim-mode-badge').innerText = `🟢 Web3 Wallet Connected On-Chain (${userAddress.substring(0, 6)}...)`;
+            document.getElementById('sim-mode-badge').style.background = 'rgba(16, 185, 129, 0.12)';
+            document.getElementById('sim-mode-badge').style.color = '#10b981';
+            document.getElementById('sim-mode-badge').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+
+            showToast(`Web3 Wallet Connected to ${activeNetwork.CHAIN_NAME}!`, "success");
+            addLog(`[Web3] Wallet connected on ${activeNetwork.CHAIN_NAME}: ${userAddress}`, 'success');
+
+            await fetchOnChainData();
+          } else {
+            isWeb3Connected = false;
+            document.getElementById('debug-resolved-net').innerText = "⚠️ UNSPECIFIED NETWORK";
+            document.getElementById('debug-contract').innerText = "Switch MetaMask to Anvil (31337) or Base Sepolia (84532)";
+            networkNameEl.innerText = `⚠️ Unsupported (${currentChainId})`;
+            showToast(`Connected to unsupported Chain ID: ${currentChainId}. Please switch network.`, "warn");
+            addLog(`[Web3 Warning] Unrecognized Chain ID: ${currentChainId}. Please switch MetaMask to Anvil or Base Sepolia.`, 'warn');
+          }
 
           // Listen for network/account switches
           if (window.ethereum.on) {
             window.ethereum.on('chainChanged', () => window.location.reload());
             window.ethereum.on('accountsChanged', () => window.location.reload());
           }
+
 
           await fetchOnChainData();
         } catch (err) {
@@ -1001,7 +1091,9 @@
         onChainBeneficiaryUsdcBalance = parseFloat(ethers.formatUnits(rawBenBal, 6));
 
         updateUI();
+        updateDepositButtonState();
       } catch (err) {
+
         console.warn("Could not fetch on-chain state (contract not called yet):", err);
       }
     }
@@ -1031,8 +1123,109 @@
       estAnnualYield.innerText = `$${parseFloat(annual).toLocaleString()} / yr`;
     }
 
+    // Robust Transaction Receipt Waiter (Combines Direct High-Speed RPC + Provider Fallback)
 
-    // Handle Deposit
+    async function waitForTxReceipt(tx) {
+      if (!tx || !tx.hash) return;
+      try {
+        const directProvider = new ethers.JsonRpcProvider(activeNetwork.RPC_URL);
+        const receipt = await Promise.race([
+          directProvider.waitForTransaction(tx.hash, 1, 15000),
+          tx.wait(1)
+        ]);
+        return receipt;
+      } catch (err) {
+        console.warn("Direct receipt polling note:", err);
+        try {
+          return await tx.wait(1);
+        } catch (e) {
+          console.warn("Fallback wait error:", e);
+        }
+      }
+    }
+
+    let onChainAllowance = 0;
+
+    // Helper to dynamically update Deposit button based on on-chain allowance
+    async function updateDepositButtonState() {
+      const depositBtn = document.getElementById('deposit-btn');
+      if (!depositBtn) return;
+
+      if (!isWeb3Connected || !usdcContract) {
+        depositBtn.innerHTML = `<span>Deposit & Earn Yield for Cause</span>`;
+        depositBtn.onclick = handleDeposit;
+        return;
+      }
+
+      try {
+        const rawAllowance = await usdcContract.allowance(userAddress, activeNetwork.CONTRACT_ADDRESS);
+        onChainAllowance = parseFloat(ethers.formatUnits(rawAllowance, 6));
+
+        const amountInput = document.getElementById('deposit-input');
+        const amount = parseFloat(amountInput.value) || 0;
+
+        if (onChainAllowance < (amount > 0 ? amount : 1)) {
+          depositBtn.innerHTML = `<span>🔓 Step 1: Approve USDC (1-Time)</span>`;
+          depositBtn.onclick = handleApprove;
+        } else {
+          depositBtn.innerHTML = `<span>💰 Deposit & Earn Yield for Cause</span>`;
+          depositBtn.onclick = handleDeposit;
+        }
+      } catch (err) {
+        console.warn("Allowance check note:", err);
+      }
+    }
+
+    // Handle Step 1: 1-Time USDC Approval
+    async function handleApprove() {
+      if (!isWeb3Connected || !usdcContract) return;
+
+      const depositBtn = document.getElementById('deposit-btn');
+      try {
+        depositBtn.disabled = true;
+        depositBtn.innerHTML = `<span>⏳ Approving in MetaMask...</span>`;
+
+        addLog(`[Web3] Requesting 1-time USDC Approval in MetaMask...`, 'info');
+        showToast(`Approve USDC in MetaMask...`, "info");
+
+        let isApproveConfirmed = false;
+        try {
+          const directProvider = new ethers.JsonRpcProvider(activeNetwork.RPC_URL);
+          const directUsdc = new ethers.Contract(activeNetwork.USDC_ADDRESS, window.APP_CONFIG.ERC20_ABI, directProvider);
+          directUsdc.once("Approval", (owner, spender) => {
+            if (owner.toLowerCase() === userAddress.toLowerCase() && !isApproveConfirmed) {
+              isApproveConfirmed = true;
+              addLog(`[Web3 Success] ✅ 1-time USDC approval confirmed! Now click Deposit below.`, 'success');
+              showToast(`1-time USDC approval complete! Now click Deposit.`, "success");
+              depositBtn.disabled = false;
+              updateDepositButtonState();
+            }
+          });
+        } catch (e) {
+          console.warn("Event listener note:", e);
+        }
+
+        const approveTx = await usdcContract.approve(activeNetwork.CONTRACT_ADDRESS, ethers.MaxUint256);
+        addLog(`[Web3] Approval submitted: ${approveTx.hash.substring(0, 10)}... Waiting for block...`, 'info');
+        await waitForTxReceipt(approveTx);
+
+        if (!isApproveConfirmed) {
+          isApproveConfirmed = true;
+          addLog(`[Web3 Success] ✅ 1-time USDC approval confirmed! Now click Deposit below.`, 'success');
+          showToast(`1-time USDC approval complete! Now click Deposit.`, "success");
+          depositBtn.disabled = false;
+          updateDepositButtonState();
+        }
+      } catch (err) {
+        console.error(err);
+        depositBtn.disabled = false;
+        updateDepositButtonState();
+        showToast("Approval cancelled or failed in wallet", "error");
+        addLog(`[Error] ${err.message || 'Approval rejected'}`, 'warn');
+      }
+    }
+
+    // Handle Step 2 / Direct Deposit
     async function handleDeposit() {
       const amountInput = document.getElementById('deposit-input');
       const amount = parseFloat(amountInput.value);
@@ -1046,25 +1239,38 @@
         try {
           const parsedAmount = ethers.parseUnits(amount.toString(), 6);
 
-          addLog(`[Web3] Requesting USDC Approval for $${amount.toFixed(2)} USDC...`, 'info');
-          showToast(`Step 1/2: Approve USDC transfer in MetaMask...`, "info");
+          // Attach live on-chain Deposited event listener
+          let isConfirmed = false;
+          try {
+            const directProvider = new ethers.JsonRpcProvider(activeNetwork.RPC_URL);
+            const directEndowment = new ethers.Contract(activeNetwork.CONTRACT_ADDRESS, window.APP_CONFIG.ENDOWMENT_ABI, directProvider);
+            directEndowment.once("Deposited", (donor, amt) => {
+              if (donor.toLowerCase() === userAddress.toLowerCase() && !isConfirmed) {
+                isConfirmed = true;
+                amountInput.value = '';
+                fetchOnChainData();
+                addLog(`[Web3 Success] ✅ Deposited $${ethers.formatUnits(amt, 6)} USDC into Aave Pool! (Confirmed via On-Chain Event)`, 'success');
+                showToast(`Successfully deposited $${ethers.formatUnits(amt, 6)} USDC on-chain!`, "success");
+              }
+            });
+          } catch (e) {
+            console.warn("Event listener setup note:", e);
+          }
 
-          // 1. Approve contract to spend USDC
-          const approveTx = await usdcContract.approve(activeNetwork.CONTRACT_ADDRESS, parsedAmount);
-          await approveTx.wait();
-
-          addLog(`[Web3] Approval confirmed! Tx: ${approveTx.hash.substring(0, 10)}...`, 'success');
-
-          // 2. Deposit into YieldEndowment contract
-          showToast(`Step 2/2: Confirm Deposit in MetaMask...`, "info");
+          // Directly trigger Deposit in MetaMask
+          showToast(`Confirm Deposit in MetaMask...`, "info");
           const depositTx = await endowmentContract.deposit(parsedAmount);
-          addLog(`[Web3] Submitting deposit transaction...`, 'info');
-          await depositTx.wait();
+          addLog(`[Web3] Deposit submitted: ${depositTx.hash.substring(0, 10)}... Waiting for block...`, 'info');
 
-          amountInput.value = '';
-          await fetchOnChainData();
-          addLog(`[Web3 Success] Deposited $${amount.toFixed(2)} USDC into Aave Pool! Tx: ${depositTx.hash.substring(0, 10)}...`, 'success');
-          showToast(`Successfully deposited $${amount.toFixed(2)} USDC on-chain!`, "success");
+          // Parallel receipt resolution
+          await waitForTxReceipt(depositTx);
+          if (!isConfirmed) {
+            isConfirmed = true;
+            amountInput.value = '';
+            await fetchOnChainData();
+            addLog(`[Web3 Success] ✅ Block confirmed! Deposited $${amount.toFixed(2)} USDC into Aave Pool! Tx: ${depositTx.hash.substring(0, 10)}...`, 'success');
+            showToast(`Successfully deposited $${amount.toFixed(2)} USDC on-chain!`, "success");
+          }
         } catch (err) {
           console.error(err);
           showToast("Transaction failed or cancelled in wallet", "error");
@@ -1093,6 +1299,7 @@
       }
     }
 
+
     // Handle Withdraw
     async function handleWithdraw() {
       const amountInput = document.getElementById('withdraw-input');
@@ -1109,13 +1316,34 @@
           addLog(`[Web3] Requesting principal withdrawal of $${amount.toFixed(2)} USDC...`, 'info');
           showToast(`Confirm withdrawal in MetaMask...`, "info");
 
-          const withdrawTx = await endowmentContract.withdrawPrincipal(parsedAmount);
-          await withdrawTx.wait();
+          let isConfirmed = false;
+          try {
+            const directProvider = new ethers.JsonRpcProvider(activeNetwork.RPC_URL);
+            const directEndowment = new ethers.Contract(activeNetwork.CONTRACT_ADDRESS, window.APP_CONFIG.ENDOWMENT_ABI, directProvider);
+            directEndowment.once("PrincipalWithdrawn", (donor, amt) => {
+              if (donor.toLowerCase() === userAddress.toLowerCase() && !isConfirmed) {
+                isConfirmed = true;
+                amountInput.value = '';
+                fetchOnChainData();
+                addLog(`[Web3 Success] ✅ Withdrew $${ethers.formatUnits(amt, 6)} USDC principal! (Confirmed via On-Chain Event)`, 'success');
+                showToast(`Principal withdrawal complete!`, "success");
+              }
+            });
+          } catch (e) {
+            console.warn("Event listener setup note:", e);
+          }
 
-          amountInput.value = '';
-          await fetchOnChainData();
-          addLog(`[Web3 Success] Withdrew $${amount.toFixed(2)} USDC principal! Tx: ${withdrawTx.hash.substring(0, 10)}...`, 'success');
-          showToast(`Principal withdrawal complete!`, "success");
+          const withdrawTx = await endowmentContract.withdrawPrincipal(parsedAmount);
+          addLog(`[Web3] Withdrawal submitted: ${withdrawTx.hash.substring(0, 10)}... Waiting for block...`, 'info');
+          await waitForTxReceipt(withdrawTx);
+
+          if (!isConfirmed) {
+            isConfirmed = true;
+            amountInput.value = '';
+            await fetchOnChainData();
+            addLog(`[Web3 Success] ✅ Block confirmed! Withdrew $${amount.toFixed(2)} USDC principal! Tx: ${withdrawTx.hash.substring(0, 10)}...`, 'success');
+            showToast(`Principal withdrawal complete!`, "success");
+          }
         } catch (err) {
           console.error(err);
           showToast("Withdrawal failed or cancelled in wallet", "error");
@@ -1143,6 +1371,7 @@
     }
 
     // Handle Harvest
+
     async function handleHarvest() {
       const harvestInput = document.getElementById('harvest-input');
       const customAmount = harvestInput.value.trim() !== '' ? parseFloat(harvestInput.value) : null;
@@ -1161,7 +1390,8 @@
             harvestTx = await endowmentContract.harvestYield();
           }
 
-          await harvestTx.wait();
+          addLog(`[Web3] Harvest submitted: ${harvestTx.hash.substring(0, 10)}... Waiting for block...`, 'info');
+          await waitForTxReceipt(harvestTx);
           harvestInput.value = '';
 
           await fetchOnChainData();
@@ -1194,7 +1424,6 @@
       }
     }
 
-
     // Handle Update Beneficiary
     async function handleUpdateBeneficiary() {
       const newAddr = beneficiaryAddressInput.value.trim();
@@ -1209,7 +1438,8 @@
           showToast(`Confirm update in MetaMask...`, "info");
 
           const updateTx = await endowmentContract.setBeneficiary(newAddr);
-          await updateTx.wait();
+          addLog(`[Web3 Admin] Update submitted: ${updateTx.hash.substring(0, 10)}... Waiting for block...`, 'info');
+          await waitForTxReceipt(updateTx);
 
           await fetchOnChainData();
           addLog(`[Web3 Success] Beneficiary updated to ${newAddr}!`, 'success');
@@ -1227,6 +1457,7 @@
     }
 
     // Toast Notifications
+
     function showToast(msg, type = "info") {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -1253,4 +1484,5 @@
     }
   </script>
 </body>
+
 </html>

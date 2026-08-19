@@ -52,8 +52,15 @@ This project provides a **yield-bearing savings endowment gateway** integrated w
 4. **Campaign Beneficiary Governance (`setBeneficiary(address newBeneficiary)`)**:
    - Allows the contract owner to dynamically update the receiving cause address without affecting active deposits.
 
-5. **Dual-Network Architecture (`frontend/config.js`)**:
-   - Out-of-the-box support for both **Base Sepolia Testnet (84532)** and **Local Anvil Fork (31337)**.
+5. **2-Stage Dynamic Action Button**:
+   - **Step 1: Approve USDC (1-Time)**: Requests 1-time `MaxUint256` approval so users never have to sign approval transactions again.
+   - **Step 2: Deposit & Earn Yield**: Automatically activates upon approval block confirmation (~2s) for direct 1-click deposits.
+
+6. **Live Web3 Diagnostics Panel**:
+   - Displays real-time Connected Wallet, MetaMask Chain ID, Resolved Environment, and Gateway Contract.
+
+7. **Event-Driven Confirmations & Real-Time Logging**:
+   - Parallel event stream listening directly to `event Deposited`, `event Approval`, `event PrincipalWithdrawn`, and `event YieldHarvested` on Base Sepolia.
 
 ---
 
@@ -104,36 +111,50 @@ forge test -v
 
 ---
 
-## 🌐 How to Test the Prototype
+## 🌐 Multi-Network Testing Guide
 
-### Option A: Test Live on Base Sepolia (Recommended)
-1. **Launch the Web Dapp**:
-   ```bash
-   cd frontend
-   python3 -m http.server 8000
-   ```
-2. Open **[http://localhost:8000](http://localhost:8000)** in Chrome with MetaMask.
-3. Switch MetaMask to **Base Sepolia Testnet**.
-4. Claim test tokens:
-   - Base Sepolia ETH from [Alchemy Faucet](https://www.alchemy.com/faucets/base-sepolia) or [Superchain Faucet](https://console.optimism.io/faucet).
-   - Aave Testnet USDC (`0xba50Cd2A20f6DA35D788639E581bca8d0B5d4D5f`) from the [Aave Base Sepolia Faucet Contract](https://sepolia.basescan.org/address/0xD9145b5F45Ad4519c7ACcD6E0A4A82e83bB8A6Dc#writeContract).
-5. Deposit USDC, watch live Aave yield accrue, and test harvesting and withdrawals on-chain!
+Start the local web server:
+```bash
+cd frontend
+python3 -m http.server 8000
+```
+
+---
+
+### Option A: Test Live on Base Sepolia Testnet
+
+1. Open **[http://localhost:8000/?network=sepolia](http://localhost:8000/?network=sepolia)** in Chrome with MetaMask.
+2. In MetaMask, select **Base Sepolia** (`Chain ID: 84532` / `0x14a34`).
+3. **Import Test Tokens in MetaMask**:
+   - **Aave Reserve USDC**: `0xba50Cd2A20f6DA35D788639E581bca8d0B5d4D5f`
+4. **Deposit & Harvest Flow**:
+   - If first time: Click **`[ 🔓 Step 1: Approve USDC (1-Time) ]`** $\rightarrow$ Confirm in MetaMask.
+   - The button flips to **`[ 💰 Deposit & Earn Yield for Cause ]`** $\rightarrow$ Click to deposit into Aave V3.
+   - Under the **Harvest Yield** tab, click **Harvest Accrued Yield** to send earned yield to the campaign!
 
 ---
 
 ### Option B: Test Locally on Anvil Fork (Fast & Free)
+
 1. **Launch the local Anvil fork**:
    ```bash
    anvil --fork-url https://base-sepolia-rpc.publicnode.com --chain-id 31337
    ```
+2. Open **[http://localhost:8000/?network=anvil](http://localhost:8000/?network=anvil)** in Chrome with MetaMask.
+3. In MetaMask, select **Localhost 8545** (`Chain ID: 31337` / `0x7a69`).
+4. **Pre-funded Anvil Test Accounts**:
+   - Account #0: `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
+   - Account #1: `0x70997970C51812dc3A010C7d01b50e0d17dc79C8`
+5. **Tip (Clear MetaMask Nonce Cache on Anvil Restart)**:
+   - If Anvil is restarted, clear MetaMask's local UI cache:
+     *MetaMask $\rightarrow$ 3 dots $\rightarrow$ Settings $\rightarrow$ Advanced $\rightarrow$ **Clear activity tab data**.*
 
-2. **Launch the Web Dapp**:
-   ```bash
-   cd frontend
-   python3 -m http.server 8000
-   ```
-3. Connect MetaMask to **Localhost 8545 (Chain ID 31337)**.
-4. Because Anvil forks Base Sepolia, the deployed contract [`0xE41Be53B...`](https://sepolia.basescan.org/address/0xE41Be53B79370CCe5a2Ecb65706528FbCa120648) and Aave V3 are already live in your local environment with instant 0-second confirmation!
+---
+
+### Option C: Offline Interactive Simulation Mode
+
+* Open **[http://localhost:8000](http://localhost:8000)** without query parameters.
+* Test the complete endowment mechanics (Deposit, Principal Protection, Real-time Yield Growth Simulation, Harvesting) with zero wallet connection required!
 
 ---
 
