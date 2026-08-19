@@ -1043,23 +1043,26 @@
       }
 
       if (isWeb3Connected && endowmentContract && usdcContract) {
-        try {
-          const parsedAmount = ethers.parseUnits(amount.toString(), 6);
+          // Check existing allowance first
+          const currentAllowance = await usdcContract.allowance(userAddress, activeNetwork.CONTRACT_ADDRESS);
+          
+          if (currentAllowance < parsedAmount) {
+            addLog(`[Web3] Step 1/2: Requesting USDC Approval for $${amount.toFixed(2)} USDC...`, 'info');
+            showToast(`Step 1/2: Approve USDC transfer in MetaMask...`, "info");
 
-          addLog(`[Web3] Requesting USDC Approval for $${amount.toFixed(2)} USDC...`, 'info');
-          showToast(`Step 1/2: Approve USDC transfer in MetaMask...`, "info");
-
-          // 1. Approve contract to spend USDC
-          const approveTx = await usdcContract.approve(activeNetwork.CONTRACT_ADDRESS, parsedAmount);
-          await approveTx.wait();
-
-          addLog(`[Web3] Approval confirmed! Tx: ${approveTx.hash.substring(0, 10)}...`, 'success');
+            const approveTx = await usdcContract.approve(activeNetwork.CONTRACT_ADDRESS, parsedAmount);
+            await approveTx.wait();
+            addLog(`[Web3] Step 1/2 Approval confirmed! Tx: ${approveTx.hash.substring(0, 10)}...`, 'success');
+          } else {
+            addLog(`[Web3] Existing USDC allowance detected ($${ethers.formatUnits(currentAllowance, 6)} USDC). Skipping Step 1!`, 'info');
+          }
 
           // 2. Deposit into YieldEndowment contract
-          showToast(`Step 2/2: Confirm Deposit in MetaMask...`, "info");
+          showToast(`Confirm Deposit in MetaMask...`, "info");
+          addLog(`[Web3] Submitting deposit transaction to Aave V3...`, 'info');
           const depositTx = await endowmentContract.deposit(parsedAmount);
-          addLog(`[Web3] Submitting deposit transaction...`, 'info');
           await depositTx.wait();
+
 
           amountInput.value = '';
           await fetchOnChainData();
