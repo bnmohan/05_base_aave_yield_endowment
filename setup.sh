@@ -50,7 +50,8 @@ fi
 echo "--------------------------------------------------------"
 echo "✅ Setup complete! To test the project:"
 echo "1. Run local chain (Base Sepolia fork):"
-echo "   anvil --fork-url https://sepolia.base.org --chain-id 31337"
+echo "   anvil --fork-url https://base-sepolia-rpc.publicnode.com --chain-id 31337"
+
 echo "2. Launch web frontend Dapp:"
 echo "   cd frontend && python3 -m http.server 8000"
 echo "--------------------------------------------------------"

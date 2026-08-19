@@ -124,8 +124,9 @@ forge test -v
 ### Option B: Test Locally on Anvil Fork (Fast & Free)
 1. **Launch the local Anvil fork**:
    ```bash
-   anvil --fork-url https://sepolia.base.org --chain-id 31337
+   anvil --fork-url https://base-sepolia-rpc.publicnode.com --chain-id 31337
    ```
+
 2. **Launch the Web Dapp**:
    ```bash
    cd frontend
